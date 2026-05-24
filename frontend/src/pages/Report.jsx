@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useSearchParams, Link } from 'react-router-dom'
 import RadarChart from '../components/RadarChart'
 import GapCard from '../components/GapCard'
 import { getReport } from '../services/api'
@@ -7,6 +7,8 @@ import { mockReportData } from '../data/mockData'
 
 export default function Report() {
   const { id } = useParams()
+  const [searchParams] = useSearchParams()
+  const token = searchParams.get('token') || ''
   const [report, setReport] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -21,7 +23,7 @@ export default function Report() {
       }
 
       try {
-        const data = await getReport(id)
+        const data = await getReport(id, token)
         setReport(data)
       } catch (err) {
         setError(err.message)
@@ -30,7 +32,7 @@ export default function Report() {
       }
     }
     load()
-  }, [id])
+  }, [id, token])
 
   if (loading) {
     return (
@@ -123,7 +125,7 @@ export default function Report() {
 
       {/* Action Bar */}
       <div className="action-bar">
-        <Link to={`/projects/${id}`} className="btn btn-primary btn-lg">
+        <Link to={`/projects/${id}?token=${encodeURIComponent(token)}`} className="btn btn-primary btn-lg">
           查看补缺项目思路 →
         </Link>
         <button className="btn btn-outline btn-lg" onClick={() => window.print()}>

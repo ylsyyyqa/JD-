@@ -11,6 +11,7 @@ const JOB_TYPES = [
 export default function ResumeBuilder() {
   const [searchParams] = useSearchParams()
   const linkedReportId = searchParams.get('from')
+  const [resumeToken, setResumeToken] = useState('')
 
   const [step, setStep] = useState(1)
   const [generating, setGenerating] = useState(false)
@@ -46,6 +47,7 @@ export default function ResumeBuilder() {
         experiences, projects, skills,
         jobType, jdText, rawMaterial,
       })
+      setResumeToken(data.accessToken || '')
       setResult(data)
       setStep(2)
     } catch (err) {
@@ -87,7 +89,7 @@ export default function ResumeBuilder() {
 
   const openHtmlPage = () => {
     if (result?.id) {
-      window.open(getResumeHtmlUrl(result.id), '_blank')
+      window.open(getResumeHtmlUrl(result.id, resumeToken), '_blank')
     }
   }
 
@@ -324,7 +326,7 @@ export default function ResumeBuilder() {
           {/* Embedded preview */}
           <div className="resume-preview">
             <iframe
-              src={getResumeHtmlUrl(result.id)}
+              src={getResumeHtmlUrl(result.id, resumeToken)}
               title="简历预览"
               style={{ width: '100%', height: '800px', border: '1px solid #e5e7eb', borderRadius: '8px' }}
             />

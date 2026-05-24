@@ -56,10 +56,11 @@ router.post('/', upload.fields([
 
     // 保存到数据库
     const id = uuidv4()
-    saveReport(id, result.jobTitle, jdText, resumeText, result.matchScore, result)
+    const accessToken = uuidv4()
+    saveReport(id, accessToken, result.jobTitle, jdText, resumeText, result.matchScore, result)
 
     // 返回结果
-    res.json({ id, ...result })
+    res.json({ id, accessToken, ...result })
   } catch (err) {
     console.error('Analysis error:', err)
     if (err.name === 'AbortError' || err.code === 'ETIMEDOUT') {
@@ -79,9 +80,13 @@ router.post('/', upload.fields([
  * 获取已保存的分析报告
  */
 router.get('/:id', (req, res) => {
-  const report = getReport(req.params.id)
+  const { token } = req.query
+  if (!token) {
+    return res.status(401).json({ error: '缺少访问令牌' })
+  }
+  const report = getReport(req.params.id, token)
   if (!report) {
-    return res.status(404).json({ error: '报告未找到' })
+    return res.status(404).json({ error: '报告未找到或令牌无效' })
   }
   res.json({ id: report.id, ...report.resultJson })
 })

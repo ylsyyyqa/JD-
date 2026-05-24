@@ -39,8 +39,8 @@ export function analyzeFiles(jdFile, resumeFile) {
   })
 }
 
-export function getReport(id) {
-  return request(`/analyze/${id}`)
+export function getReport(id, token) {
+  return request(`/analyze/${id}?token=${encodeURIComponent(token)}`)
 }
 
 export function buildResume(data) {
@@ -50,12 +50,12 @@ export function buildResume(data) {
   })
 }
 
-export function getResume(id) {
-  return request(`/resume/${id}`)
+export function getResume(id, token) {
+  return request(`/resume/${id}?token=${encodeURIComponent(token)}`)
 }
 
-export function getResumeHtmlUrl(id) {
-  return `/api/resume/${id}/html`
+export function getResumeHtmlUrl(id, token) {
+  return `/api/resume/${id}/html?token=${encodeURIComponent(token)}`
 }
 
 export function mineExperiences(data) {

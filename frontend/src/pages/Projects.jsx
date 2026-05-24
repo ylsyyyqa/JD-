@@ -1,11 +1,13 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useSearchParams, Link } from 'react-router-dom'
 import ProjectCard from '../components/ProjectCard'
 import { getReport } from '../services/api'
 import { mockProjectIdeas, mockReportData } from '../data/mockData'
 
 export default function Projects() {
   const { id } = useParams()
+  const [searchParams] = useSearchParams()
+  const token = searchParams.get('token') || ''
   const [report, setReport] = useState(null)
   const [projects, setProjects] = useState([])
   const [activeLevel, setActiveLevel] = useState(null)
@@ -19,7 +21,7 @@ export default function Projects() {
           data = mockReportData
           setProjects(mockProjectIdeas)
         } else {
-          data = await getReport(id)
+          data = await getReport(id, token)
           setProjects(data.projects || [])
         }
         setReport(data)
@@ -30,7 +32,7 @@ export default function Projects() {
       }
     }
     load()
-  }, [id])
+  }, [id, token])
 
   // Group projects by gap
   const groupedProjects = useMemo(() => {
@@ -121,7 +123,7 @@ export default function Projects() {
 
       {/* Bottom actions */}
       <div className="action-bar" style={{ marginTop: '40px' }}>
-        <Link to={`/report/${id}`} className="btn btn-outline btn-lg">
+        <Link to={`/report/${id}?token=${encodeURIComponent(token)}`} className="btn btn-outline btn-lg">
           ← 返回缺口报告
         </Link>
         <button className="btn btn-primary btn-lg" onClick={() => window.print()}>

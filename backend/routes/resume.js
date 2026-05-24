@@ -29,7 +29,8 @@ router.post('/build', async (req, res) => {
 
     // 保存
     const id = uuidv4()
-    saveReport(id, result.title || '简历', input.rawMaterial || '', '', 0, {
+    const accessToken = uuidv4()
+    saveReport(id, accessToken, result.title || '简历', input.rawMaterial || '', '', 0, {
       ...result,
       htmlContent: html,
       type: 'resume',
@@ -37,6 +38,7 @@ router.post('/build', async (req, res) => {
 
     res.json({
       id,
+      accessToken,
       ...result,
       htmlContent: html,
     })
@@ -59,9 +61,13 @@ router.post('/build', async (req, res) => {
  * 获取已生成的简历
  */
 router.get('/:id', (req, res) => {
-  const report = getReport(req.params.id)
+  const { token } = req.query
+  if (!token) {
+    return res.status(401).json({ error: '缺少访问令牌' })
+  }
+  const report = getReport(req.params.id, token)
   if (!report || report.resultJson?.type !== 'resume') {
-    return res.status(404).json({ error: '简历未找到' })
+    return res.status(404).json({ error: '简历未找到或令牌无效' })
   }
   res.json({ id: report.id, ...report.resultJson })
 })
@@ -71,7 +77,11 @@ router.get('/:id', (req, res) => {
  * 直接返回 HTML 页面（浏览器可查看/打印）
  */
 router.get('/:id/html', (req, res) => {
-  const report = getReport(req.params.id)
+  const { token } = req.query
+  if (!token) {
+    return res.status(401).send('<h1>缺少访问令牌</h1>')
+  }
+  const report = getReport(req.params.id, token)
   if (!report || report.resultJson?.type !== 'resume') {
     return res.status(404).send('<h1>简历未找到</h1>')
   }

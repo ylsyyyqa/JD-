@@ -25,12 +25,13 @@ router.post('/mine-experiences', async (req, res) => {
 
     // 保存到数据库（便于后续追溯）
     const id = uuidv4()
-    saveReport(id, '经历挖掘', rawMaterial, '', 0, {
+    const accessToken = uuidv4()
+    saveReport(id, accessToken, '经历挖掘', rawMaterial, '', 0, {
       ...result,
       type: 'experience-mining',
     })
 
-    res.json({ id, questions: result.questions || [] })
+    res.json({ id, accessToken, questions: result.questions || [] })
   } catch (err) {
     console.error('Mine experiences error:', err)
     if (err.name === 'AbortError' || err.code === 'ETIMEDOUT') {
@@ -50,9 +51,13 @@ router.post('/mine-experiences', async (req, res) => {
  * 获取历史挖掘结果
  */
 router.get('/mine-experiences/:id', (req, res) => {
-  const report = getReport(req.params.id)
+  const { token } = req.query
+  if (!token) {
+    return res.status(401).json({ error: '缺少访问令牌' })
+  }
+  const report = getReport(req.params.id, token)
   if (!report || report.resultJson?.type !== 'experience-mining') {
-    return res.status(404).json({ error: '挖掘记录未找到' })
+    return res.status(404).json({ error: '挖掘记录未找到或令牌无效' })
   }
   res.json({ id: report.id, ...report.resultJson })
 })

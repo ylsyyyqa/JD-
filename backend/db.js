@@ -19,10 +19,11 @@ function writeAll(records) {
   fs.writeFileSync(dbPath, JSON.stringify(records, null, 2), 'utf-8')
 }
 
-export function saveReport(id, jobTitle, jdText, resumeText, matchScore, resultJson) {
+export function saveReport(id, accessToken, jobTitle, jdText, resumeText, matchScore, resultJson) {
   const records = readAll()
   records.unshift({
     id,
+    accessToken,
     jobTitle,
     matchScore,
     resultJson,
@@ -34,9 +35,9 @@ export function saveReport(id, jobTitle, jdText, resumeText, matchScore, resultJ
   return id
 }
 
-export function getReport(id) {
+export function getReport(id, accessToken) {
   const records = readAll()
-  return records.find(r => r.id === id) || null
+  return records.find(r => r.id === id && r.accessToken === accessToken) || null
 }
 
 export function listReports(limit = 20) {

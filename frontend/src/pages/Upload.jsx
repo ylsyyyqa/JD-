@@ -42,7 +42,7 @@ export default function Upload() {
         result = await analyzeJD(jdText, resumeText)
       }
 
-      navigate(`/report/${result.id}`)
+      navigate(`/report/${result.id}?token=${encodeURIComponent(result.accessToken)}`)
     } catch (err) {
       setError(err.message)
       setAnalyzing(false)
