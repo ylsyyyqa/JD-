@@ -27,6 +27,7 @@ export default function ResumeBuilder() {
   const [experiences, setExperiences] = useState('')
   const [projects, setProjects] = useState('')
   const [skills, setSkills] = useState('')
+  const [certifications, setCertifications] = useState('')
   const [jdText, setJdText] = useState('')
   const [rawMaterial, setRawMaterial] = useState('')
   const [mining, setMining] = useState(false)
@@ -44,7 +45,7 @@ export default function ResumeBuilder() {
     try {
       const data = await buildResume({
         name, targetRole, contact, education,
-        experiences, projects, skills,
+        experiences, projects, skills, certifications,
         jobType, jdText, rawMaterial,
       })
       setResumeToken(data.accessToken || '')
@@ -279,6 +280,20 @@ export default function ResumeBuilder() {
               placeholder="校园二手交易平台 | 全栈开发 | 2023.03-2023.06&#10;用React+Java+MySQL实现商品发布、搜索、收藏功能&#10;..."
               value={projects}
               onChange={e => setProjects(e.target.value)}
+            />
+          </div>
+
+          <div className="form-section">
+            <h4>奖项 / 证书（可选，一行一个）</h4>
+            <p className="form-hint">
+              CET-4/6、计算机等级考试、竞赛获奖、奖学金、专业资格证等
+            </p>
+            <textarea
+              className="input textarea-mini"
+              placeholder="CET-6 580分&#10;全国大学生数学建模竞赛 省二等奖&#10;校级一等奖学金（2023-2024）"
+              value={certifications}
+              onChange={e => setCertifications(e.target.value)}
+              rows={3}
             />
           </div>
 

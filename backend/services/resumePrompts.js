@@ -134,6 +134,7 @@ export function buildResumeUserMessage(input) {
   if (input.experiences) msg += `\n工作/实习经历：${input.experiences}`
   if (input.projects) msg += `\n项目经验：${input.projects}`
   if (input.skills) msg += `\n技能：${input.skills}`
+  if (input.certifications) msg += `\n奖项/证书：${input.certifications}`
 
   return msg
 }
