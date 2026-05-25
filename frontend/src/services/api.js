@@ -55,7 +55,7 @@ export function getResume(id, token) {
 }
 
 export function getResumeHtmlUrl(id, token) {
-  return `/api/resume/${id}/html?token=${encodeURIComponent(token)}`
+  return `${BASE_URL}/resume/${id}/html?token=${encodeURIComponent(token)}`
 }
 
 export function mineExperiences(data) {
